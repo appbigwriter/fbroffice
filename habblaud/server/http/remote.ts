@@ -299,7 +299,7 @@ function esc(text: string): string {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-export function loginPage(opts: { caDownload: boolean }): string {
+export function loginPage(opts: { caDownload: boolean; hint?: string }): string {
   const ca = opts.caDownload
     ? `<p class="ca">${esc(tr('Primeira vez neste celular?'))} <a href="${CA_PATH}" download="habblaud-ca.crt">${esc(tr('Instale o certificado do Habblaud'))}</a> ${esc(tr('para tirar o aviso de segurança (confira a impressão digital que o npm run remote:setup mostrou).'))}</p>`
     : '';
@@ -342,7 +342,7 @@ export function loginPage(opts: { caDownload: boolean }): string {
 <form id="f" autocomplete="on">
   <h1>FBR News</h1>
   <p style="font-size:11px;margin-bottom:16px">by Habblaud</p>
-  <p>${esc(tr('Acesso pelo celular. Entre com o usuário e a senha que você escolheu no npm run remote:setup.'))}</p>
+  <p>${esc(opts.hint ?? tr('Acesso pelo celular. Entre com o usuário e a senha que você escolheu no npm run remote:setup.'))}</p>
   <label for="u">${esc(tr('Usuário'))}</label>
   <input id="u" name="username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required>
   <label for="p">${esc(tr('Senha'))}</label>
@@ -388,6 +388,7 @@ function cookieHeader(value: string, maxAgeS: number, secure: boolean): string {
 }
 
 export interface RemoteGateDeps {
+  loginHint?: string;
   config: Pick<RemoteConfig, 'user' | 'passwordHash'>;
   sessions: RemoteSessions;
   /** Cookie com Secure (a porta fala HTTPS). */
@@ -492,7 +493,7 @@ export function createRemoteGate(deps: RemoteGateDeps): (req: IncomingMessage, r
       if (authed) {
         res.writeHead(302, { Location: '/', 'Cache-Control': 'no-store' });
         res.end();
-      } else sendHtml(res, loginPage({ caDownload: caAvailable() }));
+      } else sendHtml(res, loginPage({ caDownload: caAvailable(), hint: deps.loginHint }));
       return true;
     }
 

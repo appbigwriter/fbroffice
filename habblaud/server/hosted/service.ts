@@ -3,7 +3,8 @@ import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { realpath } from 'node:fs/promises';
 import { createInterface } from 'node:readline';
-import { join, resolve, sep } from 'node:path';
+import { dirname, join, resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { tr } from '../../shared/i18n';
 import type { Projects } from '../projects/projects';
 import { SiwcStore, hostId, writePrivate } from './siwc';
@@ -31,8 +32,8 @@ export class CodexRpc {
   private child: ChildProcessWithoutNullStreams;
   private next = 0;
   private pending = new Map<number, { ok: (value: any) => void; fail: (error: Error) => void; timer: ReturnType<typeof setTimeout> }>();
-  constructor(env: NodeJS.ProcessEnv, cwd: string, event: (message: any) => void, closed: () => void, bin = 'codex') {
-    this.child = spawn(bin, ['app-server', '--listen', 'stdio://', ...providerArgs], { cwd, env, windowsHide: true, stdio: ['pipe', 'pipe', 'pipe'] });
+  constructor(env: NodeJS.ProcessEnv, cwd: string, event: (message: any) => void, closed: () => void, bin = 'codex', prefix: string[] = []) {
+    this.child = spawn(bin, [...prefix, 'app-server', '--listen', 'stdio://', ...providerArgs], { cwd, env, windowsHide: true, stdio: ['pipe', 'pipe', 'pipe'] });
     const lines = createInterface({ input: this.child.stdout });
     lines.on('line', line => {
       if (line.length > 2_000_000) { this.close(); return; }
@@ -99,8 +100,9 @@ export class HostedOffice {
     if (existsSync(path) || this.cloning.has(path)) throw new Error(tr('Esse projeto já existe ou está sendo clonado.'));
     this.cloning.add(path); const job = this.job('clone', path);
     // HTTPS github.com apenas, sem shell, sem submódulos e sem prompt de credenciais.
-    execFile('git', ['-c', 'core.hooksPath=/dev/null', '-c', 'protocol.file.allow=never', 'clone', '--', repo.url, path], {
-      env: { PATH: process.env.PATH, HOME: '/tmp', GIT_TERMINAL_PROMPT: '0', GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null' }, timeout: 120_000, maxBuffer: 256_000,
+    execFile('git', ['-c', 'core.hooksPath=/dev/null', '-c', 'credential.helper=', '-c', 'protocol.file.allow=never', 'clone', '--', repo.url, path], {
+      env: { PATH: process.env.PATH, HOME: '/tmp', GIT_TERMINAL_PROMPT: '0', GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null',
+        GIT_ASKPASS: join(dirname(fileURLToPath(import.meta.url)), 'tools', 'git-askpass.cjs'), FBR_GIT_TOKEN: process.env.FBR_GITHUB_TOKEN ?? '' }, timeout: 120_000, maxBuffer: 256_000,
     }, error => {
       this.cloning.delete(path);
       job.status = error ? 'failed' : 'done';

@@ -11,7 +11,7 @@ export function hostedGate(data: string, env: NodeJS.ProcessEnv = process.env) {
   const passwordHash = parsePasswordHash(hash);
   if (!user || !passwordHash) throw new Error(tr('Modo servidor exige FBR_ADMIN_USER e FBR_ADMIN_PASSWORD_HASH.'));
   const config: RemoteConfig = { host: '0.0.0.0', port: 4747, user, passwordHash, passwordHashText: hash!, allow: new Set() };
-  return createRemoteGate({ config, secure: true, sessions: new RemoteSessions(loadSecret(join(data, 'fbr-web-secret')), config, Date.now, join(data, 'fbr-web-revoked.json')) });
+  return createRemoteGate({ config, secure: true, loginHint: tr('Entre com o usuário e a senha do administrador FBR.'), sessions: new RemoteSessions(loadSecret(join(data, 'fbr-web-secret')), config, Date.now, join(data, 'fbr-web-revoked.json')) });
 }
 const esc = (s: string) => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
 function page() {
@@ -23,7 +23,7 @@ function page() {
 <style>body{background:#121b27;color:#eff3f9;font:16px system-ui;max-width:900px;margin:32px auto;padding:16px}a{color:#9dcaff}input,textarea,button{font:inherit;padding:10px;border-radius:6px;border:1px solid #617086}input,textarea{display:block;box-sizing:border-box;width:100%;background:#202c3b;color:inherit;margin:8px 0}button{cursor:pointer}button:disabled{opacity:.5}section{border:1px solid #465366;padding:16px;margin:16px 0;border-radius:8px}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:260px;overflow:auto}small{display:block}#status{white-space:pre-wrap}</style>
 <h1>FBR News <small>by Habblaud</small></h1><a href="/">${esc(tr('Voltar ao escritório'))}</a>
 <section><h2>${esc(tr('Codex no servidor'))}</h2><p id="account"></p><p>${esc(tr('Autorize o FBR no seu computador usando o identificador abaixo. Transfira a credencial por SSH para /data/credentials-siwc.json, com permissão 600.'))}</p><pre id="host"></pre><a href="https://developers.openai.com/siwc/token-sharing-open-source/self-hosted-vms" target="_blank" rel="noopener">${esc(tr('Procedimento oficial para VM própria'))}</a></section>
-<section><h2>${esc(tr('Clonar projeto do GitHub'))}</h2><form id="clone"><label for="repository">${esc(tr('URL HTTPS do repositório público'))}</label><input id="repository" type="url" placeholder="https://github.com/owner/repo" required><button>${esc(tr('Clonar e adicionar ao escritório'))}</button></form></section>
+<section><h2>${esc(tr('Clonar projeto do GitHub'))}</h2><form id="clone"><label for="repository">${esc(tr('URL HTTPS do repositório GitHub'))}</label><input id="repository" type="url" placeholder="https://github.com/owner/repo" required><button>${esc(tr('Clonar e adicionar ao escritório'))}</button></form></section>
 <p id="status" role="status"></p><div id="projects"></div><h2>${esc(tr('Tarefas do servidor'))}</h2><div id="jobs"></div>
 <script>
 const L=${JSON.stringify(labels).replaceAll('<', '\\u003c')};let busy=false;

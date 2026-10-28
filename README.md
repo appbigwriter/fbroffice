@@ -26,6 +26,7 @@ docker build -t fbroffice:local .
 ```
 
 Veja o [guia de domínio, senha e diagnóstico de 502](habblaud/docs/easypanel.md).
+Para executar projetos e agentes na VM, veja [Codex no servidor com assinatura ChatGPT](habblaud/docs/server-codex.md).
 
 Para acesso pela internet, configure autenticação antes de publicar o domínio.
 A porta 4747 é a interface local, sem o login do listener remoto do Habblaud.

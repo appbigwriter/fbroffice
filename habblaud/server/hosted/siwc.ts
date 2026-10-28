@@ -1,7 +1,9 @@
 // Registro próprio do FBR pelo fluxo público SIWC para aplicativos open source.
 // Não lê auth.json do Codex. Endpoints fixos; erros nunca incluem tokens/respostas.
 import { createHash, createPublicKey, randomBytes, randomUUID, verify } from 'node:crypto';
-import { chmodSync, existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { userInfo } from 'node:os';
+import { chmodSync, existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { tr } from '../../shared/i18n';
 
@@ -16,8 +18,13 @@ export interface SiwcSession {
 export function writePrivate(file: string, value: unknown): void {
   mkdirSync(dirname(file), { recursive: true, mode: 0o700 });
   const tmp = `${file}.${randomUUID()}.tmp`;
-  writeFileSync(tmp, JSON.stringify(value), { mode: 0o600, flag: 'wx' });
-  renameSync(tmp, file); chmodSync(file, 0o600);
+  writeFileSync(tmp, '', { mode: 0o600, flag: 'wx' });
+  try {
+    // chmod sozinho não restringe ACLs do Windows. Protege antes de gravar o segredo.
+    if (process.platform === 'win32') execFileSync('icacls.exe', [tmp, '/inheritance:r', '/grant:r', `${userInfo().username}:(F)`], { stdio: 'ignore', windowsHide: true });
+    writeFileSync(tmp, JSON.stringify(value));
+    renameSync(tmp, file); chmodSync(file, 0o600);
+  } catch { rmSync(tmp, { force: true }); throw new Error(tr('Não foi possível proteger o arquivo de configuração.')); }
 }
 export function hostId(file: string): string {
   if (existsSync(file)) {

@@ -1,7 +1,9 @@
 // Tradução para o francês. Chave = texto original em PT (exatamente como passado a tr()); valor = francês.
 // As lacunas {0}, {1}... (e as nomeadas, como {sala}) precisam aparecer na tradução, em qualquer ordem.
 // Chave ausente = o texto fica em PT. `npm run i18n:check` lista os textos sem tradução e as chaves que sobraram.
+import { HOSTED_FR } from './hosted';
 export const FR: Readonly<Record<string, string>> = {
+  ...HOSTED_FR,
   "Versão modificada do Habblaud, criado por Márcio Junior, sob licença MIT.": "Version modifiée de Habblaud, créé par Márcio Junior, sous licence MIT.",
   "Licença MIT": "Licence MIT",
   "Créditos e avisos": "Crédits et mentions",

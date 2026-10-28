@@ -19,6 +19,10 @@ do meio (0.**3**.0).
 
 ### Adicionado
 
+- Modo de servidor pessoal (`FBR_HOSTED=1`): login próprio obrigatório, cadastro por clone GitHub e até dois
+  agentes Codex simultâneos pelo painel `/server`. Projetos, histórico e autorização ficam no volume `/data`.
+- Registro próprio da assinatura ChatGPT pelo fluxo SIWC open source, com PKCE, validação de identidade e
+  renovação serializada de credenciais; autorização no computador e transferência protegida para a VM.
 - Créditos da distribuição FBR, licença MIT original e licenças de terceiros disponíveis em **Sobre**.
   O build gera os avisos automaticamente e os inclui também na imagem Docker.
 - Marca local **FBR News**, com o crédito **by Habblaud** menor e título do navegador atualizado.

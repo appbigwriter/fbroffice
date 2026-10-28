@@ -1,7 +1,9 @@
 // Tradução para o espanhol. Chave = texto original em PT (exatamente como passado a tr()); valor = espanhol.
 // As lacunas {0}, {1}... (e as nomeadas, como {sala}) precisam aparecer na tradução, em qualquer ordem.
 // Chave ausente = o texto fica em PT. `npm run i18n:check` lista os textos sem tradução e as chaves que sobraram.
+import { HOSTED_ES } from './hosted';
 export const ES: Readonly<Record<string, string>> = {
+  ...HOSTED_ES,
   "Versão modificada do Habblaud, criado por Márcio Junior, sob licença MIT.": "Versión modificada de Habblaud, creado por Márcio Junior, bajo la licencia MIT.",
   "Licença MIT": "Licencia MIT",
   "Créditos e avisos": "Créditos y avisos",
