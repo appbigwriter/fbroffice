@@ -13,6 +13,7 @@ import { createAgentRow, updateAgentRow } from './rows';
 import { createAccountChip, createProgress, updateAccountChip, updateProgress } from './widgets';
 import { tr } from '../../../shared/i18n';
 import { ProjectsPanel } from './projects';
+import { access } from '../net/access';
 
 interface RoomRefs {
   head: HTMLButtonElement;
@@ -39,6 +40,7 @@ interface NodeRefs {
 
 export class Sidebar implements UiComponent {
   private projects: ProjectsPanel;
+  private serverLink = h('a', { class: 'ui-btn', text: tr('Projetos e agentes no servidor'), hidden: true, attrs: { href: '/server' } });
   readonly el: HTMLElement;
   private input: HTMLInputElement;
   private query = '';
@@ -136,7 +138,7 @@ export class Sidebar implements UiComponent {
       'aside',
       { class: 'ui-panel ui-sidebar', attrs: { 'aria-label': tr('Salas e agentes'), id: 'ui-sidebar' } },
       h('div', { class: 'ui-side__head' }, h('div', { class: 'ui-side__title' }, h('h2', { text: tr('Escritório') }), close), this.projects.button, search, this.filters),
-      this.scroller, this.projects.el,
+      this.serverLink, this.scroller, this.projects.el,
     );
   }
 
@@ -147,6 +149,7 @@ export class Sidebar implements UiComponent {
 
   render(): void {
     this.projects.render();
+    setHidden(this.serverLink, !access().hosted || this.ctx.store.mock || this.ctx.store.replaying);
     const snap = this.ctx.store.snapshot;
     const accounts = snap?.accounts ?? [];
     const hidden = new Set(this.ctx.prefs.hiddenAccounts);

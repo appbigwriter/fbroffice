@@ -11,8 +11,11 @@
 !scripts/build-server.mjs
 !scripts/build-info.mjs
 !scripts/licenses.mjs
+!scripts/siwc-login.ts
+!scripts/hosted-admin.ts
 !LICENSE
 !NOTICE
+!vendor/
 
 # Mesmo dentro das pastas incluídas: nada de lixo local.
 **/node_modules

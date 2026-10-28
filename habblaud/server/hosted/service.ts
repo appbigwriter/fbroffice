@@ -59,7 +59,7 @@ export class CodexRpc {
     });
   }
   notify(method: string) { this.child.stdin.write(JSON.stringify({ method }) + '\n'); }
-  close() { this.child.kill(); }
+  close() { this.child.kill(); const force = setTimeout(() => { if (this.child.exitCode === null && this.child.signalCode === null) this.child.kill('SIGKILL'); }, 3000); force.unref(); }
 }
 export class HostedOffice {
   readonly host: string;
@@ -115,6 +115,7 @@ export class HostedOffice {
     if (this.workers.size >= 2) throw new Error(tr('Já há dois agentes em execução. Aguarde um terminar.'));
     const root = await realpath(this.root), cwd = await realpath(path);
     if (!cwd.startsWith(root + sep) || !this.projects.get(cwd) || resolve(cwd) === root) throw new Error(tr('Projeto fora da pasta autorizada.'));
+    if (this.workers.size >= 2) throw new Error(tr('Já há dois agentes em execução. Aguarde um terminar.'));
     // Reserva antes do refresh assíncrono, evitando ultrapassar a concorrência.
     const job = this.job('codex', cwd);
     let timer: ReturnType<typeof setTimeout> | undefined;

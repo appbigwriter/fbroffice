@@ -19,6 +19,8 @@ WORKDIR /app
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/LICENSE /app/NOTICE /app/THIRD_PARTY_NOTICES.txt ./
 COPY --from=builder /app/dist ./dist
+RUN apk add --no-cache git && npm install --global --no-audit --no-fund @openai/codex@0.165.0
+COPY habblaud/vendor/codex/ /usr/local/share/licenses/codex/
 RUN mkdir -p /data && chown node:node /data
 USER node
 EXPOSE 4747

@@ -16,4 +16,5 @@ await build({
 });
 
 const info = writeBuildInfo('dist/build.json');
+await build({ entryPoints: ['scripts/siwc-login.ts', 'scripts/hosted-admin.ts'], outdir: 'dist/server/tools', bundle: true, platform: 'node', target: 'node22', format: 'esm', packages: 'external' });
 console.log(`  dist/build.json  ${info.commit === 'unknown' ? 'unknown' : info.commit.slice(0, 12)}${info.dirty ? ' (dirty)' : ''}`);

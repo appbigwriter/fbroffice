@@ -21,6 +21,8 @@
     "shots:world": "node scripts/world-shots.mjs",
     "build": "npm run licenses && npm run build:client && npm run build:server",
     "licenses": "node scripts/licenses.mjs",
+    "siwc:login": "tsx scripts/siwc-login.ts",
+    "server:setup": "tsx scripts/hosted-admin.ts",
     "build:client": "vite build --config vite.config.ts",
     "build:server": "node scripts/build-server.mjs",
     "start": "node dist/server/index.js",

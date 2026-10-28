@@ -25,6 +25,9 @@ Thumbs.db
 **/credentials*.json
 **/remote-secret
 **/remote-sessions.json
+**/credentials-siwc.json
+**/server-env.json
+**/fbr-web-secret
 
 # Caches e artefatos
 client/public/legal/

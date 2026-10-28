@@ -8,6 +8,7 @@ habblaud/*
 !habblaud/vite.config.ts
 !habblaud/LICENSE
 !habblaud/NOTICE
+!habblaud/vendor/
 !habblaud/client/
 !habblaud/shared/
 !habblaud/server/
@@ -16,6 +17,8 @@ habblaud/scripts/*
 !habblaud/scripts/build-server.mjs
 !habblaud/scripts/build-info.mjs
 !habblaud/scripts/licenses.mjs
+!habblaud/scripts/siwc-login.ts
+!habblaud/scripts/hosted-admin.ts
 **/node_modules
 **/dist
 **/.git

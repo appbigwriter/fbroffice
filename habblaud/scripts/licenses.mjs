@@ -22,6 +22,8 @@ for (const path of Object.keys(lock.packages).filter(Boolean).sort()) {
   blocks.push([`${pkg.name}@${pkg.version}`, `License: ${typeof pkg.license === 'string' ? pkg.license : JSON.stringify(pkg.license)}`, repository ? `Source: ${repository}` : '', related && source !== dir ? `License notice supplied by the same upstream project: ${related}` : '', ...files.map((file) => `\n--- ${file} ---\n${readFileSync(join(source, file), 'utf8')}`)].filter(Boolean).join('\n'));
 }
 if (missing.length) throw new Error(`Pacotes sem aviso de licença: ${missing.join(', ')}`);
+const codexNotices = join(root, 'vendor/codex');
+if (existsSync(codexNotices)) blocks.push(['OpenAI Codex 0.165.0 (server image)', 'Source: https://github.com/openai/codex/tree/rust-v0.165.0', ...notices(codexNotices).map(file => `\n--- ${file} ---\n${readFileSync(join(codexNotices, file), 'utf8')}`)].join('\n'));
 const output = `Third-party notices — FBR News Office\n\nGenerated from installed packages recorded in package-lock.json.\nThe following components retain their own licenses and copyrights.\nThis inventory includes development tools; not every listed component is shipped at runtime.\n\n${blocks.join('\n\n' + '='.repeat(72) + '\n\n')}\n`;
 writeFileSync(join(root, 'THIRD_PARTY_NOTICES.txt'), output);
 const target = join(root, 'client/public/legal');
