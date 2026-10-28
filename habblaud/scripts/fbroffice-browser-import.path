@@ -1,0 +1,8 @@
+[Unit]
+Description=Watch for a completed FBR browser authorization
+
+[Path]
+PathChanged=/var/lib/fbroffice-browser/credentials-siwc.json
+
+[Install]
+WantedBy=multi-user.target

@@ -12,6 +12,7 @@
 !scripts/build-info.mjs
 !scripts/licenses.mjs
 !scripts/siwc-login.ts
+!scripts/siwc-import.ts
 !scripts/hosted-admin.ts
 !LICENSE
 !NOTICE

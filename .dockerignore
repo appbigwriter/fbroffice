@@ -18,6 +18,7 @@ habblaud/scripts/*
 !habblaud/scripts/build-info.mjs
 !habblaud/scripts/licenses.mjs
 !habblaud/scripts/siwc-login.ts
+!habblaud/scripts/siwc-import.ts
 !habblaud/scripts/hosted-admin.ts
 **/node_modules
 **/dist

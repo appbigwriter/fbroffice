@@ -2,7 +2,7 @@
 import http from 'node:http';
 import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { beginLogin, finishLogin, hostId, readSession, writePrivate } from '../server/hosted/siwc';
+import { beginLogin, finishLogin, hostId, readSession, SiwcError, writePrivate } from '../server/hosted/siwc';
 import { tr } from '../shared/i18n';
 
 const args = process.argv.slice(2);
@@ -23,7 +23,10 @@ const server = http.createServer(async (req, res) => {
     const session = await finishLogin(attempt, url); writePrivate(output, session);
     res.end(tr('FBR autorizado. Pode fechar esta aba.'));
     console.log(tr('Credencial FBR salva em {0}. Não envie esse arquivo no chat ou ao GitHub.', [output]));
-  } catch { res.writeHead(400); res.end(tr('A autorização falhou. Execute o login novamente.')); process.exitCode = 1; }
+  } catch (error) {
+    const message = error instanceof SiwcError ? error.message : tr('A autorização falhou. Execute o login novamente.');
+    res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' }); res.end(message); console.error(message); process.exitCode = 1;
+  }
   finally { clearTimeout(timer); server.close(); }
 });
 const timer = setTimeout(() => { console.error(tr('O login expirou. Execute novamente.')); process.exitCode = 1; server.close(); }, 10 * 60_000);

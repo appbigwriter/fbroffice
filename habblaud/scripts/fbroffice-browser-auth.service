@@ -1,0 +1,13 @@
+[Unit]
+Description=FBR own subscription authorization in VM browser
+Requires=fbroffice-desktop.service
+After=fbroffice-desktop.service
+
+[Service]
+User=fbroffice-browser
+Group=fbroffice-browser
+EnvironmentFile=/opt/fbroffice-browser/host.env
+ExecStart=/usr/bin/python3 /opt/fbroffice-browser/browser-auth.py
+StandardOutput=journal
+StandardError=journal
+UMask=0077

@@ -1,5 +1,7 @@
 // Textos do modo servidor pessoal: português, inglês, espanhol e francês.
 const rows: readonly (readonly [string, string, string, string])[] = [
+  ['FBR: autorização verificada e instalada na VM.', 'FBR: authorization verified and installed on the VM.', 'FBR: autorización verificada e instalada en la VM.', 'FBR : autorisation vérifiée et installée sur la VM.'],
+  ['FBR: não foi possível validar/importar a autorização. Nenhuma credencial foi exibida.', 'FBR: could not validate/import authorization. No credentials were displayed.', 'FBR: no se pudo validar/importar la autorización. No se mostraron credenciales.', 'FBR : validation/importation de l’autorisation impossible. Aucun identifiant n’a été affiché.'],
   ['Não foi possível proteger o arquivo de configuração.', 'Could not protect the configuration file.', 'No se pudo proteger el archivo de configuración.', 'Impossible de protéger le fichier de configuration.'],
   ['Projetos e agentes no servidor', 'Server projects and agents', 'Proyectos y agentes del servidor', 'Projets et agents du serveur'],
   ['Modo servidor exige FBR_ADMIN_USER e FBR_ADMIN_PASSWORD_HASH.', 'Server mode requires FBR_ADMIN_USER and FBR_ADMIN_PASSWORD_HASH.', 'El modo servidor requiere FBR_ADMIN_USER y FBR_ADMIN_PASSWORD_HASH.', 'Le mode serveur exige FBR_ADMIN_USER et FBR_ADMIN_PASSWORD_HASH.'],

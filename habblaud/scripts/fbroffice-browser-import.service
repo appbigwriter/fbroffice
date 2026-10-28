@@ -1,0 +1,12 @@
+[Unit]
+Description=Validate and install FBR browser authorization
+StartLimitIntervalSec=300
+StartLimitBurst=3
+
+[Service]
+Type=oneshot
+EnvironmentFile=/opt/fbroffice-browser/host.env
+ExecStart=/opt/fbroffice-worker/node/bin/node /opt/fbroffice-browser/siwc-import.mjs
+Restart=on-failure
+RestartSec=30
+UMask=0077

@@ -17,7 +17,7 @@ await build({
 });
 
 const info = writeBuildInfo('dist/build.json');
-await build({ entryPoints: ['scripts/siwc-login.ts', 'scripts/hosted-admin.ts'], outdir: 'dist/server/tools', bundle: true, platform: 'node', target: 'node22', format: 'esm', packages: 'external' });
+await build({ entryPoints: ['scripts/siwc-login.ts', 'scripts/siwc-import.ts', 'scripts/hosted-admin.ts'], outdir: 'dist/server/tools', bundle: true, platform: 'node', target: 'node22', format: 'esm', packages: 'external' });
 copyFileSync('server/hosted/git-askpass.cjs', 'dist/server/tools/git-askpass.cjs');
 chmodSync('dist/server/tools/git-askpass.cjs', 0o755);
 copyFileSync('server/hosted/worker-relay.cjs', 'dist/server/tools/worker-relay.cjs');

@@ -1,0 +1,19 @@
+[Unit]
+Description=FBR Office browser access through SSH only
+Requires=fbroffice-desktop.service
+After=fbroffice-desktop.service
+
+[Service]
+User=fbroffice-browser
+Group=fbroffice-browser
+ExecStart=/usr/bin/websockify --web=/usr/share/novnc 127.0.0.1:6080 127.0.0.1:5909
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+MemoryMax=256M
+
+[Install]
+WantedBy=multi-user.target

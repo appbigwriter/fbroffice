@@ -19,6 +19,8 @@ do meio (0.**3**.0).
 
 ### Adicionado
 
+- Navegador privado na VPS: Chrome com perfil separado, desktop por noVNC somente em loopback e túnel SSH.
+  O login SIWC pode acontecer inteiramente na VM, com validação e importação protegida após a ação do usuário.
 - Modo de servidor pessoal (`FBR_HOSTED=1`): login próprio obrigatório, cadastro por clone GitHub e até dois
   agentes Codex simultâneos pelo painel `/server`. Projetos, histórico e autorização ficam no volume `/data`.
 - Registro próprio da assinatura ChatGPT pelo fluxo SIWC open source, com PKCE, validação de identidade e

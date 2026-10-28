@@ -123,6 +123,9 @@ runuser -u fbroffice-worker -- env HOME=/var/lib/fbroffice-worker \
 
 ## Referências oficiais verificadas
 
+Para autenticar diretamente com um navegador dentro da VM, veja
+[Navegador privado na VPS](vps-browser.md).
+
 - [Registro SIWC para aplicativos open source](https://developers.openai.com/siwc/token-sharing-open-source/sign-in)
 - [VM própria e transferência protegida](https://developers.openai.com/siwc/token-sharing-open-source/self-hosted-vms)
 - [Provedor Codex app-server](https://developers.openai.com/siwc/token-sharing-open-source/codex-app-server)
