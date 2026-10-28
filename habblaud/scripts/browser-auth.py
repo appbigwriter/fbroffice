@@ -7,7 +7,7 @@ from urllib.parse import urlsplit
 env = dict(os.environ, HOME='/var/lib/fbroffice-browser', DISPLAY=':9')
 command = ['/opt/fbroffice-worker/node/bin/node', '/opt/fbroffice-browser/siwc-login.mjs',
            '--host-id', os.environ['FBR_VM_HOST_ID'], '--output',
-           '/var/lib/fbroffice-browser/credentials-siwc.json']
+           '/var/lib/fbroffice-browser/credentials-siwc.json', '--timeout-minutes', '30']
 with subprocess.Popen(command, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True) as child:
     for line in child.stdout:
         parsed = urlsplit(line.strip())

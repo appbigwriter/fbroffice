@@ -33,7 +33,8 @@ abre o endereço oficial no Chrome remoto e atende o callback em loopback
 na mesma VM. Não usa `auth.json` do Codex nem automatiza senha, CAPTCHA, MFA
 ou aprovação de permissões. Essas etapas são feitas pela pessoa no navegador.
 
-A tentativa tem prazo de dez minutos. Para abrir uma nova tentativa:
+A tentativa no navegador da VPS tem prazo de trinta minutos. O CLI usa dez
+minutos por padrão e aceita `--timeout-minutes` entre 1 e 30. Para abrir uma nova tentativa:
 
 ```sh
 systemctl restart fbroffice-browser-auth.service

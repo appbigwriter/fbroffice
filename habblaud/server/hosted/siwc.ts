@@ -45,7 +45,8 @@ export function readSession(file: string): SiwcSession | undefined {
   }
   return s;
 }
-export function beginLogin(host: string, redirect: string, previous?: SiwcSession) {
+export function beginLogin(host: string, redirect: string, previous?: SiwcSession, timeoutMs = 10 * 60_000) {
+  if (!Number.isFinite(timeoutMs) || timeoutMs < 60_000 || timeoutMs > 30 * 60_000) throw new SiwcError(tr('Autorização expirada ou estado inválido.'));
   const target = new URL(redirect);
   if (target.protocol !== 'http:' || target.hostname !== '127.0.0.1' || target.pathname !== '/auth/callback' || target.search || target.hash) throw new SiwcError(tr('Callback de autorização inválido.'));
   if (!/^urn:uuid:[a-f0-9-]{36}$/i.test(host)) throw new SiwcError(tr('Identificador do servidor inválido.'));
@@ -57,7 +58,7 @@ export function beginLogin(host: string, redirect: string, previous?: SiwcSessio
     code_challenge_method: 'S256', code_challenge: createHash('sha256').update(verifier).digest('base64url') })) url.searchParams.set(key, value);
   if (!previous) url.searchParams.set('agent_name_hint', 'FBR News Office');
   // Não enviamos id_token_hint: URLs exibidas ao usuário não contêm credenciais.
-  return { url: url.toString(), state, nonce, verifier, redirect, client, host, subject: previous?.subject, expires: Date.now() + 10 * 60_000 };
+  return { url: url.toString(), state, nonce, verifier, redirect, client, host, subject: previous?.subject, expires: Date.now() + timeoutMs };
 }
 type Attempt = ReturnType<typeof beginLogin>;
 export function callbackCode(attempt: Attempt, url: URL) {

@@ -23,6 +23,10 @@ describe('SIWC próprio para VM', () => {
     callback.searchParams.set('state', 'other'); expect(() => callbackCode(a, callback)).toThrow();
     callback.searchParams.set('state', a.state); callback.searchParams.delete('client_id'); expect(() => callbackCode(a, callback)).toThrow();
     expect(() => beginLogin(host, 'https://office.fbr.news/auth/callback')).toThrow();
+    const longer = beginLogin(host, a.redirect, undefined, 30 * 60_000);
+    expect(longer.expires - Date.now()).toBeGreaterThan(29 * 60_000);
+    expect(() => beginLogin(host, a.redirect, undefined, 31 * 60_000)).toThrow();
+    expect(() => beginLogin(host, a.redirect, undefined, Number.NaN)).toThrow();
   });
   it('valida assinatura, nonce, emissor, audience e identidade antes de confiar no token', async () => {
     const { publicKey, privateKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
