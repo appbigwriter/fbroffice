@@ -25,6 +25,8 @@ Validação local:
 docker build -t fbroffice:local .
 ```
 
+Veja o [guia de domínio, senha e diagnóstico de 502](habblaud/docs/easypanel.md).
+
 Para acesso pela internet, configure autenticação antes de publicar o domínio.
 A porta 4747 é a interface local, sem o login do listener remoto do Habblaud.
 Não a exponha publicamente sem proteção de acesso no proxy.
