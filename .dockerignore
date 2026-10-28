@@ -1,0 +1,26 @@
+# Somente arquivos necessários para compilar o aplicativo em habblaud/.
+*
+!habblaud/
+habblaud/*
+!habblaud/package.json
+!habblaud/package-lock.json
+!habblaud/tsconfig.json
+!habblaud/vite.config.ts
+!habblaud/LICENSE
+!habblaud/NOTICE
+!habblaud/client/
+!habblaud/shared/
+!habblaud/server/
+!habblaud/scripts/
+habblaud/scripts/*
+!habblaud/scripts/build-server.mjs
+!habblaud/scripts/build-info.mjs
+!habblaud/scripts/licenses.mjs
+**/node_modules
+**/dist
+**/.git
+**/.env
+**/.env.*
+**/*.log
+**/.DS_Store
+**/client/public/legal
