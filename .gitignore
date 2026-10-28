@@ -1,0 +1,36 @@
+# Dependências e compilação
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+.git_backup/
+**/.git_backup/
+
+# Sistema e logs
+.DS_Store
+Thumbs.db
+*.log
+
+# Segredos, chaves e credenciais
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.habblaud-backup-*
+**/auth.json
+**/oauth_creds.json
+**/credentials*.json
+**/remote-secret
+**/remote-sessions.json
+
+# Caches e artefatos
+client/public/legal/
+**/client/public/legal/
+docker-compose.override.yml
+scripts/assets/.cache/
+**/scripts/assets/.cache/
+.claude/
+**/.claude/

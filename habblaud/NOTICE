@@ -1,0 +1,27 @@
+FBR News Office — by Habblaud
+
+This is a modified distribution of Habblaud, originally created by Márcio Junior.
+Upstream: https://github.com/marmottajr/habblaud
+Upstream base revision: faa1a012b5fbf632c66dc6801c5383e53a542406
+Original copyright: Copyright (c) 2026 Márcio Junior
+Original license: MIT; the complete original notice is preserved in LICENSE.
+
+The FBR News distribution adds local branding, persistent office projects,
+Windows bridge discovery and automatic startup, and related integrations.
+The original author's copyright and license remain applicable to the original
+code and associated materials. This distribution does not claim authorship of
+the original Habblaud code, artwork or third-party components.
+
+The modifications distributed in this repository are also provided under MIT,
+subject to the separate licenses of third-party components. See
+THIRD_PARTY_NOTICES.txt for their notices, including the Pixelify Sans font.
+
+Habblaud, OpenAI, Codex, Claude, Anthropic, Gemini, Google, GLM and Z.AI names
+identify their respective projects, products and providers. This distribution
+does not imply their sponsorship, endorsement, or affiliation with FBR News.
+MIT does not grant additional trademark or provider-account rights.
+
+Provider accounts, subscriptions and external services remain subject to their
+own terms. Credentials and private session data are not part of this source
+distribution. Local office monitoring does not grant rights to bypass limits,
+reuse another product's OAuth credentials, or redistribute private data.

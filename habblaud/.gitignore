@@ -1,0 +1,23 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.habblaud-backup-*
+**/auth.json
+**/oauth_creds.json
+**/credentials*.json
+**/remote-secret
+**/remote-sessions.json
+client/public/legal/
+docker-compose.override.yml
+scripts/assets/.cache/
+
+# Configurações locais do Claude Code e caches de geração
+.claude/
