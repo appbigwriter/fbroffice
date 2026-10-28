@@ -3,13 +3,31 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { beginLogin, callbackCode, hostId, SiwcStore, verifyIdentity, writePrivate, type SiwcSession } from './siwc';
+import { beginLogin, callbackCode, finishLogin, hostId, SiwcStore, verifyIdentity, writePrivate, type SiwcSession } from './siwc';
 import { githubRepository } from './service';
 
 const dirs: string[] = [];
 afterEach(() => { vi.unstubAllGlobals(); for (const dir of dirs.splice(0)) rmSync(dir, { recursive: true, force: true }); });
 const host = 'urn:uuid:11111111-1111-4111-8111-111111111111';
 describe('SIWC próprio para VM', () => {
+  it('retém o cliente emitido mesmo se a troca falhar e mostra apenas diagnóstico permitido', async () => {
+    const attempt = beginLogin(host, 'http://127.0.0.1:3456/auth/callback');
+    const callback = new URL(attempt.redirect);
+    callback.search = new URLSearchParams({ state: attempt.state, code: 'one-use-test-code', client_id: 'oaiapp_issued' }).toString();
+    let retained: string | undefined;
+    vi.stubGlobal('fetch', vi.fn(async (url: string, init: RequestInit) => {
+      expect(url).toBe('https://auth.openai.com/api/accounts/oauth/token');
+      expect(init.headers).toMatchObject({ 'Content-Type': 'application/x-www-form-urlencoded' });
+      const form = new URLSearchParams(init.body as URLSearchParams);
+      expect(Object.fromEntries(form)).toEqual({ resource: 'https://api.openai.com/v1', grant_type: 'authorization_code', client_id: 'oaiapp_issued', code: 'one-use-test-code', code_verifier: attempt.verifier, redirect_uri: attempt.redirect });
+      return new Response(JSON.stringify({ error: { code: 'invalid_grant', param: 'code', message: 'DO-NOT-LOG-THIS-BODY' } }), { status: 400, headers: { 'x-request-id': 'req-test-123' } });
+    }));
+    await expect(finishLogin(attempt, callback, client => retained = client)).rejects.toMatchObject({ diagnostic: { stage: 'token_exchange', status: 400, code: 'invalid_grant', parameter: 'code', requestId: 'req-test-123' } });
+    expect(retained).toBe('oaiapp_issued');
+    const retry = beginLogin(host, attempt.redirect, { client_id: retained! });
+    expect(new URL(retry.url).searchParams.get('client_id')).toBe('oaiapp_issued');
+    expect(new URL(retry.url).searchParams.has('agent_name_hint')).toBe(false);
+  });
   it('mantém host estável e separa registro inicial do client_id emitido', () => {
     const dir = mkdtempSync(join(tmpdir(), 'fbr-siwc-')); dirs.push(dir);
     expect(hostId(join(dir, 'host'))).toBe(hostId(join(dir, 'host')));

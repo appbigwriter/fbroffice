@@ -54,6 +54,10 @@ Atualize `/server` no escritório para conferir o estado da conexão. Autorizar
 uma assinatura não inicia tarefas nem faz inferência de teste automaticamente.
 Uma verificação humana ou recusa da OpenAI precisa ser resolvida no fluxo oficial;
 o navegador remoto não elimina requisitos de acesso ou permissões da conta.
+Em falhas da troca de código, o CLI mantém o identificador emitido em um arquivo
+de registro privado ao lado da credencial, para reautorizar o mesmo cliente.
+Os logs contêm apenas diagnóstico permitido; descrições e corpos brutos do
+provedor, códigos de autorização e tokens não são registrados.
 
 ## Serviços instalados
 

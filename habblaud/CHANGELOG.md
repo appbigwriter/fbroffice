@@ -12,6 +12,8 @@ do meio (0.**3**.0).
 
 ### Corrigido
 
+- O login SIWC preserva o identificador emitido mesmo se a troca de código falhar e registra somente diagnóstico
+  OAuth permitido (etapa, status, código, parâmetro e ID de requisição), sem o corpo da resposta ou credenciais.
 - A autorização pelo navegador da VPS permite até 30 minutos para concluir a verificação humana e o login.
 - O desktop da VPS permanece ativo quando o Chrome fecha e reinicia automaticamente caso a sessão gráfica termine.
 - No Windows, o bridge encontra o executável nativo do Codex instalado pelo npm mesmo quando só `codex.cmd` e
