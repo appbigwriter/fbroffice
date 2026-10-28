@@ -11,7 +11,9 @@ const ISSUER = 'https://auth.openai.com';
 export const RESOURCE = 'https://api.openai.com/v1';
 const TOKEN_ENDPOINT = `${ISSUER}/api/accounts/oauth/token`;
 /** Mensagem controlada pelo aplicativo, sem corpo do provedor ou credenciais. */
-export class SiwcError extends Error {}
+export class SiwcError extends Error {
+  constructor(message: string, readonly diagnostic?: { stage: string; status: number; code: string; parameter?: string; requestId?: string }) { super(message); }
+}
 export interface SiwcSession {
   client_id: string; subject: string; email?: string; ext_agent_host_id: string;
   access_token: string; refresh_token: string; id_token: string; scopes: string[];
@@ -45,7 +47,7 @@ export function readSession(file: string): SiwcSession | undefined {
   }
   return s;
 }
-export function beginLogin(host: string, redirect: string, previous?: SiwcSession, timeoutMs = 10 * 60_000) {
+export function beginLogin(host: string, redirect: string, previous?: Pick<SiwcSession, 'client_id'> & Partial<Pick<SiwcSession, 'subject'>>, timeoutMs = 10 * 60_000) {
   if (!Number.isFinite(timeoutMs) || timeoutMs < 60_000 || timeoutMs > 30 * 60_000) throw new SiwcError(tr('Autorização expirada ou estado inválido.'));
   const target = new URL(redirect);
   if (target.protocol !== 'http:' || target.hostname !== '127.0.0.1' || target.pathname !== '/auth/callback' || target.search || target.hash) throw new SiwcError(tr('Callback de autorização inválido.'));
@@ -72,7 +74,18 @@ export function callbackCode(attempt: Attempt, url: URL) {
 }
 async function jsonFetch(url: string, init?: RequestInit): Promise<Record<string, unknown>> {
   const response = await fetch(url, { ...init, redirect: 'error', signal: AbortSignal.timeout(20_000) });
-  if (!response.ok) throw new SiwcError(tr('A autorização OpenAI falhou (HTTP {0}).', [response.status]));
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({})) as Record<string, any>;
+    const error = body?.error;
+    const rawCode = typeof error === 'string' ? error : error?.code ?? error?.type ?? body?.code;
+    const known = new Set(['invalid_grant', 'invalid_client', 'invalid_request', 'invalid_request_error', 'unauthorized_client', 'access_denied', 'unsupported_grant_type', 'invalid_scope', 'invalid_resource', 'server_error', 'temporarily_unavailable', 'invalid_authorization_code', 'invalid_refresh_token', 'refresh_token_reused']);
+    const code = known.has(rawCode) ? rawCode as string : 'unknown_error';
+    const rawParameter = error?.param ?? body?.param;
+    const parameter = ['client_id', 'grant_type', 'redirect_uri', 'code_verifier', 'code', 'scope', 'resource'].includes(rawParameter) ? rawParameter as string : undefined;
+    const id = response.headers.get('x-request-id');
+    const requestId = id && /^[a-zA-Z0-9_-]{1,120}$/.test(id) ? id : undefined;
+    throw new SiwcError(tr('A autorização OpenAI falhou (HTTP {0}).', [response.status]) + ` [${code}]`, { stage: url === TOKEN_ENDPOINT ? 'token_exchange' : 'identity_keys', status: response.status, code, parameter, requestId });
+  }
   return await response.json() as Record<string, unknown>;
 }
 export async function verifyIdentity(jwt: string, client: string, nonce?: string, expectedSubject?: string, keys?: Record<string, unknown>[]) {
@@ -100,8 +113,9 @@ function sessionFromToken(data: Record<string, unknown>, identity: { subject: st
   return { client_id: client, ...identity, ext_agent_host_id: host, access_token: data.access_token, refresh_token: data.refresh_token,
     id_token: typeof data.id_token === 'string' ? data.id_token : old?.id_token ?? '', scopes, saved_at: Date.now(), expires_at: Date.now() + data.expires_in * 1000 };
 }
-export async function finishLogin(attempt: Attempt, callback: URL): Promise<SiwcSession> {
+export async function finishLogin(attempt: Attempt, callback: URL, retainClient?: (client: string) => void): Promise<SiwcSession> {
   const { client, code } = callbackCode(attempt, callback);
+  retainClient?.(client);
   const data = await tokenRequest({ grant_type: 'authorization_code', client_id: client, code, code_verifier: attempt.verifier, redirect_uri: attempt.redirect });
   if (typeof data.id_token !== 'string') throw new SiwcError(tr('Identidade OpenAI ausente.'));
   const identity = await verifyIdentity(data.id_token, client, attempt.nonce, attempt.subject);
