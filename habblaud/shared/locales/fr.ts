@@ -2,6 +2,10 @@
 // As lacunas {0}, {1}... (e as nomeadas, como {sala}) precisam aparecer na tradução, em qualquer ordem.
 // Chave ausente = o texto fica em PT. `npm run i18n:check` lista os textos sem tradução e as chaves que sobraram.
 export const FR: Readonly<Record<string, string>> = {
+  "Versão modificada do Habblaud, criado por Márcio Junior, sob licença MIT.": "Version modifiée de Habblaud, créé par Márcio Junior, sous licence MIT.",
+  "Licença MIT": "Licence MIT",
+  "Créditos e avisos": "Crédits et mentions",
+  "Licenças de terceiros": "Licences tierces",
   // Cadastro de projetos
   "+ Agente Codex": "+ Agent Codex",
   "Abre outra conversa do Codex nesta pasta. Envie uma mensagem para iniciar o agente.": "Ouvre une autre conversation Codex dans ce dossier. Envoyez un message pour démarrer l’agent.",

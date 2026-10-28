@@ -19,6 +19,8 @@ do meio (0.**3**.0).
 
 ### Adicionado
 
+- Créditos da distribuição FBR, licença MIT original e licenças de terceiros disponíveis em **Sobre**.
+  O build gera os avisos automaticamente e os inclui também na imagem Docker.
 - Marca local **FBR News**, com o crédito **by Habblaud** menor e título do navegador atualizado.
 - Atalho **+ Agente Codex** em cada projeto, abrindo outra conversa na mesma pasta pelo link oficial do aplicativo.
 

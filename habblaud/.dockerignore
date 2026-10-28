@@ -10,6 +10,9 @@
 !server/
 !scripts/build-server.mjs
 !scripts/build-info.mjs
+!scripts/licenses.mjs
+!LICENSE
+!NOTICE
 
 # Mesmo dentro das pastas incluídas: nada de lixo local.
 **/node_modules

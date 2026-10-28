@@ -38,6 +38,7 @@ ENV NODE_ENV=production \
 WORKDIR /app
 
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/LICENSE /app/NOTICE /app/THIRD_PARTY_NOTICES.txt ./
 COPY --from=builder /app/dist ./dist
 
 # Estado do Habblaud (nomes persistidos). O volume nomeado herda este dono na primeira montagem.
