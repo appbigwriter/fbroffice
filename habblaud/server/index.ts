@@ -60,6 +60,8 @@ import { OwnerSocial } from './world/social';
 import { BuildingTokens } from './world/tokens';
 import { BuildingUplink } from './world/uplink';
 import { WorldViewer } from './world/viewer';
+import { HostedOffice } from './hosted/service';
+import { hostedGate, hostedRoutes } from './hosted/http';
 
 const config = loadConfig();
 const startedAt = Date.now();
@@ -81,6 +83,9 @@ const roomAliases = new RoomAliases(join(config.dataDir, 'rooms.json'));
 roomAliases.load();
 const projects = new Projects({ file: join(config.dataDir, 'projects.json'), change: () => late.office?.setProjects(projects.list()), check: config.inDocker ? undefined : folderProblem });
 projects.load();
+const hosted = isTruthy(process.env.FBR_HOSTED) ? new HostedOffice(config.dataDir, projects) : undefined;
+const serverGate = hosted ? hostedGate(config.dataDir) : undefined;
+if (hosted) process.env.HABBLAUD_CODEX_DIRS = hosted.codexHome;
 
 // Office, contas e fontes de agentes se referenciam (avisos de mudança / fontes): ligação tardia.
 const late: { office?: Office; agents?: SourceSet; permissions?: PermissionRegistry; messages?: MessageRegistry; ptys?: PtyManager; ptyOff?: string } = {};
@@ -383,7 +388,8 @@ const api = createApiHandler({
   codexLive,
   stats,
   updates,
-  remote: config.remote ? { is: isRemoteRequest, allows: (f) => config.remote!.allow.has(f) } : undefined,
+  hosted: !!hosted,
+  remote: config.remote || hosted ? { is: isRemoteRequest, allows: (f) => !hosted && !!config.remote?.allow.has(f) } : undefined,
   world: world ? createWorldRoutes(world, worldViewer, worldSocial) : undefined,
 });
 
@@ -422,6 +428,10 @@ server.on('request', (req, res) => {
   const url = parseUrl(req);
   try {
     if (guard(req, res)) return;
+    // O healthcheck do Docker não carrega cookie. Expõe apenas liveness.
+    if (hosted && url.pathname === '/api/health' && req.method === 'GET') { sendJson(res, 200, { ok: true }); return; }
+    if (serverGate?.(req, res, url)) return;
+    if (hosted && hostedRoutes(hosted, req, res, url)) return;
     if (!api(req, res, url)) fallback(req, res, url);
   } catch (err) {
     log.warn(tr('Erro ao responder {0} {1}: {2}', [req.method, url.pathname, errMsg(err)]));

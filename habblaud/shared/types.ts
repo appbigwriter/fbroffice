@@ -386,6 +386,8 @@ export interface OfficeSnapshot {
  * personagem e renomear salas, que nunca valem pela porta remota).
  */
 export interface AccessInfo {
+  /** Administração de projetos e tarefas no servidor pessoal, com login próprio. */
+  hosted?: boolean;
   remote: boolean;
   local: boolean;
   permissions: boolean;

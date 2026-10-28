@@ -26,6 +26,7 @@ import type { Projects } from '../projects/projects';
 import { projectKey } from '../../shared/projects';
 
 export interface ApiDeps {
+  hosted?: boolean;
   projects?: Projects;
   projectFolders?: () => Promise<SpawnFolder[]>;
   refreshProjects?: () => void;
@@ -428,6 +429,7 @@ export function createApiHandler(deps: ApiDeps): (req: IncomingMessage, res: Ser
       else {
         const remote = isRemote(req);
         const access: AccessInfo = {
+          ...(deps.hosted ? { hosted: true } : {}),
           remote,
           local: !remote && isLoopbackHost(req.headers.host),
           permissions: !!deps.permissions && trusted(req, 'permissions'),
