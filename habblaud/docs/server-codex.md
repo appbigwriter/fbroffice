@@ -74,10 +74,52 @@ ativos e registram esse estado; não existe retomada automática de trabalho ou
 troca silenciosa para uma API paga. A assinatura continua sujeita aos limites
 da conta e à disponibilidade de modelos. Histórico e projetos persistem no volume.
 
-Este é um ambiente pessoal para repositórios de confiança. O worker compartilha
-o usuário e o container do aplicativo; não há isolamento para executar código
-hostil de outros usuários nem separação de segredos por tenant. Backups do volume
-contêm dados privados e precisam de proteção equivalente.
+Este é um ambiente pessoal para repositórios de confiança. No modo integrado,
+o worker compartilha o usuário e o container do aplicativo. O modo separado
+descrito abaixo usa outro usuário e protege os segredos administrativos por
+permissões de arquivo. Não há isolamento para executar código hostil de outros
+usuários nem separação de segredos por tenant. Backups contêm dados privados e
+precisam de proteção equivalente.
+
+### Worker separado quando o Docker bloqueia namespaces
+
+No VPS configurado nesta implantação, o sandbox dentro do container foi recusado
+pelo isolamento de namespaces do Docker. Foi instalado um worker systemd com
+usuário dedicado `fbroffice-worker`, sem login e sem privilégios de root.
+
+- O painel usa `FBR_CODEX_SOCKET=/run/fbroffice-worker/codex.sock`.
+- O socket é criado pelo systemd para `root:1000`, com modo 660. Seu diretório
+  tem modo 710 e grupo 1000; o usuário do worker não pertence a esse grupo e não
+  pode abrir uma nova conexão ao socket. O listener é recebido por socket activation.
+- O worker só aceita pastas reais sob `/srv/fbr-office/repositories/`. Não escuta
+  TCP, não recebe credenciais em argumentos e não registra tokens ou saída do provedor.
+- O painel e o worker usam o mesmo caminho `/srv/fbr-office`, com bind mount no
+  container e `HABBLAUD_DATA_DIR=/srv/fbr-office`. O diretório do socket também
+  é montado no container. O armazenamento anterior em `/data` foi preservado.
+- ACLs concedem ao worker acesso somente às árvores `repositories` e `codex`.
+  Arquivos privados do painel e da autorização permanecem com dono 1000 e modo 600.
+- Bubblewrap e o perfil `bwrap-userns-restrict` vieram dos pacotes oficiais do
+  Ubuntu. O perfil permite ao sandbox criar seu namespace e restringe as
+  capacidades dos filhos. A restrição global de user namespaces continua ligada.
+- Os arquivos `scripts/hosted-worker.py`, `fbroffice-worker.service` e
+  `fbroffice-worker.socket` registram o serviço instalado. O binário oficial
+  Codex 0.165.0 fica sob `/opt/fbroffice-worker/vendor`; os argumentos fixos do
+  provedor ficam em `provider-args.json`, com dono root. Node 24.11.1 para os
+  projetos fica sob `/opt/fbroffice-worker/node`.
+
+Com essa configuração, a credencial própria do FBR fica em
+`/srv/fbr-office/credentials-siwc.json`. Use o caminho mostrado na página
+`/server`; não substitua o ID estável dessa VM ao importar a autorização.
+
+Não basta ligar o worker: é necessário que o sandbox passe no teste real sob
+o usuário dedicado. Este teste não faz inferência nem consome tokens:
+
+```sh
+cd /srv/fbr-office/repositories/appbigwriter--fbroffice
+runuser -u fbroffice-worker -- env HOME=/var/lib/fbroffice-worker \
+  CODEX_HOME=/srv/fbr-office/codex PATH=/usr/bin:/bin \
+  /opt/fbroffice-worker/vendor/bin/codex sandbox -- /bin/true
+```
 
 ## Referências oficiais verificadas
 

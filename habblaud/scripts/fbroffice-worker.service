@@ -1,0 +1,20 @@
+[Unit]
+Description=FBR Office unprivileged Codex worker
+Requires=fbroffice-worker.socket
+After=fbroffice-worker.socket
+
+[Service]
+User=fbroffice-worker
+Group=fbroffice-worker
+ExecStart=/usr/bin/python3 /opt/fbroffice-worker/hosted-worker.py
+Environment=FBR_WORKER_DATA=/srv/fbr-office
+Environment=FBR_WORKER_CODEX=/opt/fbroffice-worker/vendor/bin/codex
+Environment=FBR_WORKER_ARGS=/opt/fbroffice-worker/provider-args.json
+UMask=0007
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/srv/fbr-office/repositories /srv/fbr-office/codex /var/lib/fbroffice-worker
+TimeoutStopSec=5
+Restart=on-failure

@@ -25,7 +25,7 @@ export const providerArgs = [
   '-c', 'model_providers.openai_chatgpt_plan.requires_openai_auth=false',
   '-c', 'model_providers.openai_chatgpt_plan.supports_websockets=false',
   '-c', 'shell_environment_policy.inherit="none"',
-  '-c', 'shell_environment_policy.set.PATH="/usr/local/bin:/usr/bin:/bin"',
+  '-c', 'shell_environment_policy.set.PATH="/opt/fbroffice-worker/node/bin:/usr/local/bin:/usr/bin:/bin"',
 ];
 // stdin/stdout com RPC; nenhum socket do Codex é exposto pelo container.
 export class CodexRpc {
@@ -133,7 +133,7 @@ export class HostedOffice {
         }
         if (message.method === 'turn/completed') finish(message.params?.turn?.status === 'completed');
         if (message.method === 'error' && message.params?.willRetry !== true) { job.output += '\n' + tr('O Codex informou uma falha. Confira a autorização, o modelo e o sandbox do servidor.'); }
-      }, () => finish(false));
+      }, () => finish(false), process.env.FBR_CODEX_SOCKET ? process.execPath : 'codex', process.env.FBR_CODEX_SOCKET ? [join(dirname(fileURLToPath(import.meta.url)), 'tools', 'worker-relay.cjs'), process.env.FBR_CODEX_SOCKET] : []);
       this.workers.set(job.id, rpc);
       timer = setTimeout(() => { job.output += '\n' + tr('Tempo máximo da tarefa atingido.'); finish(false); }, 30 * 60_000);
       await rpc.request('initialize', { clientInfo: { name: 'fbr_news_office', title: 'FBR News Office', version: '1.0.3' } }); rpc.notify('initialized');

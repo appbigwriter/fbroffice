@@ -14,7 +14,7 @@ export function hostedGate(data: string, env: NodeJS.ProcessEnv = process.env) {
   return createRemoteGate({ config, secure: true, loginHint: tr('Entre com o usuário e a senha do administrador FBR.'), sessions: new RemoteSessions(loadSecret(join(data, 'fbr-web-secret')), config, Date.now, join(data, 'fbr-web-revoked.json')) });
 }
 const esc = (s: string) => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
-function page() {
+function page(office: HostedOffice) {
   const labels = {
     offline: tr('Assinatura ainda não conectada.'), connected: tr('Assinatura conectada.'), task: tr('Tarefa para o Codex'), start: tr('Iniciar agente no servidor'),
     stop: tr('Parar agente'), wait: tr('Operação enviada. Atualizando…'), error: tr('Não foi possível concluir a operação.'),
@@ -22,7 +22,7 @@ function page() {
   return `<!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FBR News Office</title>
 <style>body{background:#121b27;color:#eff3f9;font:16px system-ui;max-width:900px;margin:32px auto;padding:16px}a{color:#9dcaff}input,textarea,button{font:inherit;padding:10px;border-radius:6px;border:1px solid #617086}input,textarea{display:block;box-sizing:border-box;width:100%;background:#202c3b;color:inherit;margin:8px 0}button{cursor:pointer}button:disabled{opacity:.5}section{border:1px solid #465366;padding:16px;margin:16px 0;border-radius:8px}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:260px;overflow:auto}small{display:block}#status{white-space:pre-wrap}</style>
 <h1>FBR News <small>by Habblaud</small></h1><a href="/">${esc(tr('Voltar ao escritório'))}</a>
-<section><h2>${esc(tr('Codex no servidor'))}</h2><p id="account"></p><p>${esc(tr('Autorize o FBR no seu computador usando o identificador abaixo. Transfira a credencial por SSH para /data/credentials-siwc.json, com permissão 600.'))}</p><pre id="host"></pre><a href="https://developers.openai.com/siwc/token-sharing-open-source/self-hosted-vms" target="_blank" rel="noopener">${esc(tr('Procedimento oficial para VM própria'))}</a></section>
+<section><h2>${esc(tr('Codex no servidor'))}</h2><p id="account"></p><p>${esc(tr('Autorize o FBR no seu computador usando o identificador abaixo. Transfira a credencial por SSH para {0}, com permissão 600.', [join(office.data, 'credentials-siwc.json')]))}</p><pre id="host"></pre><a href="https://developers.openai.com/siwc/token-sharing-open-source/self-hosted-vms" target="_blank" rel="noopener">${esc(tr('Procedimento oficial para VM própria'))}</a></section>
 <section><h2>${esc(tr('Clonar projeto do GitHub'))}</h2><form id="clone"><label for="repository">${esc(tr('URL HTTPS do repositório GitHub'))}</label><input id="repository" type="url" placeholder="https://github.com/owner/repo" required><button>${esc(tr('Clonar e adicionar ao escritório'))}</button></form></section>
 <p id="status" role="status"></p><div id="projects"></div><h2>${esc(tr('Tarefas do servidor'))}</h2><div id="jobs"></div>
 <script>
@@ -42,7 +42,7 @@ export function hostedRoutes(office: HostedOffice, req: IncomingMessage, res: Se
   if (url.pathname !== '/server' && !url.pathname.startsWith('/api/server/')) return false;
   if (!isRemoteRequest(req)) { sendJson(res, 401, { error: tr('Faça login para administrar o servidor.') }); return true; }
   if (url.pathname === '/server' && req.method === 'GET') {
-    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Frame-Options': 'DENY', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer' }); res.end(page()); return true;
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Frame-Options': 'DENY', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer' }); res.end(page(office)); return true;
   }
   if (url.pathname === '/api/server/status' && req.method === 'GET') { sendJson(res, 200, office.status()); return true; }
   if (req.method !== 'POST') { sendJson(res, 405, { error: tr('Método não permitido') }); return true; }

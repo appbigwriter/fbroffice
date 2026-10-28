@@ -1,0 +1,14 @@
+[Unit]
+Description=FBR Office local Codex worker socket
+After=systemd-tmpfiles-setup.service
+
+[Socket]
+ListenStream=/run/fbroffice-worker/codex.sock
+SocketUser=root
+SocketGroup=1000
+SocketMode=0660
+DirectoryMode=0710
+RemoveOnStop=true
+
+[Install]
+WantedBy=sockets.target
