@@ -37,3 +37,6 @@ exportações locais e interfaces de uso permitidas, com procedência e data.
 
 Esta preparação verifica os avisos e os arquivos desta distribuição; ela não
 certifica direitos sobre conteúdo externo, conteúdo dos usuários ou usos futuros.
+
+Veja a [revisão técnica desta distribuição](license-review.md), com a origem
+verificada, os resultados dos checks e os limites da análise.
