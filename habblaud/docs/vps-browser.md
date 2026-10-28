@@ -23,6 +23,8 @@ ao repositório. O campo `password` contém a senha; o VNC usa oito caracteres.
 
 O desktop e os agentes continuam no VPS quando o Windows é desligado. Só o
 túnel de visualização precisa ser aberto novamente quando você quiser acessá-lo.
+Fechar o Chrome não encerra a sessão gráfica. O serviço também reinicia o
+desktop após um encerramento inesperado ou normal do processo principal.
 
 ## Autorizar a assinatura dentro da VM
 

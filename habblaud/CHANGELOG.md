@@ -12,6 +12,7 @@ do meio (0.**3**.0).
 
 ### Corrigido
 
+- O desktop da VPS permanece ativo quando o Chrome fecha e reinicia automaticamente caso a sessão gráfica termine.
 - No Windows, o bridge encontra o executável nativo do Codex instalado pelo npm mesmo quando só `codex.cmd` e
   `codex.ps1` estão no PATH. Criação de agentes desligada deixa de gerar um aviso de recusa no bridge de mensagens.
 - O bridge só anuncia criação de agentes quando o recurso está disponível; a falta do ditado opcional não gera

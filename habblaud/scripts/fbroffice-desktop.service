@@ -7,7 +7,7 @@ User=fbroffice-browser
 Group=fbroffice-browser
 Environment=HOME=/var/lib/fbroffice-browser
 ExecStart=/usr/bin/tigervncserver :9 -fg -localhost yes -geometry 1440x900 -depth 24 -rfbport 5909 -SecurityTypes VncAuth -PasswordFile /var/lib/fbroffice-browser/.vnc/passwd -xstartup /opt/fbroffice-browser/session.sh
-Restart=on-failure
+Restart=always
 RestartSec=3
 KillMode=control-group
 TimeoutStopSec=10
